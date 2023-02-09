@@ -1,38 +1,49 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AdminEntity } from "./adminentity.entity";
 import { AdminForm } from "./adminform.dto";
+import { AdminFormUpdate } from "./adminformupdate.dto";
 
 
 @Injectable()
 export class AdminService {
+    constructor(
+        @InjectRepository(AdminEntity)
+        private adminRepo: Repository<AdminEntity>,
+      ) {}
 
-getIndex():string { 
-    return "Admin Index"; 
+getIndex():any { 
+    return this.adminRepo.find();
 
 }
 getUserByID(id):any {
-    
-    return "the id is "+id;
+    return this.adminRepo.findOneBy({ id });
 }
 
 getUserByIDName(qry):any {
-    
-    return "the id is "+qry.id +" and name is "+qry.name;
+    return this.adminRepo.findOneBy({ id:qry.id,name:qry.name });
 }
 
 insertUser(mydto:AdminForm):any {
-    
-        return "Admin Inserted name: " + mydto.name+" and id is " + mydto.id;
-    }
+    const adminaccount = new AdminEntity()
+    adminaccount.name = mydto.name;
+    adminaccount.email = mydto.email;
+    adminaccount.password = mydto.password;
+    adminaccount.address = mydto.address;
+   return this.adminRepo.save(adminaccount);
+      }
 
 updateUser(name,id):any {
-        return "Admin updated name: " +name+" and id is " +id;
+    console.log(name+id);
+    return this.adminRepo.update(id,{name:name});
     }
-updateUserbyid(name,id):any {
-        return "Update admin where id " +id+" and change name to " +name;
-    }
+updateUserbyid(mydto:AdminFormUpdate,id):any {
+    return this.adminRepo.update(id,mydto);
+       }
     deleteUserbyid(id):any {
     
-        return "Delete id is "+id;
+        return this.adminRepo.delete(id);
     }
     
 
