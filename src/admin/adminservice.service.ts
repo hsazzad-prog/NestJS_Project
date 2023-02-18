@@ -46,5 +46,14 @@ updateUserbyid(mydto:AdminFormUpdate,id):any {
         return this.adminRepo.delete(id);
     }
     
+    getManagersByAdminID(id):any {
+        return this.adminRepo.find({ 
+                where: {id:id},
+            relations: {
+                managers: true,
+            },
+         });
+    }
+
 
 }
