@@ -2,20 +2,31 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   ParseIntPipe,
   Post,
   Put,
   Query,
+  UploadedFile,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
+  Session,
+  UseGuards
 } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { ManagerForm } from 'src/manager/manager.dto';
 import { ManagerService } from 'src/manager/manager.service';
 import { AdminForm } from './adminform.dto';
 import { AdminFormUpdate } from './adminformupdate.dto';
 import { AdminService } from './adminservice.service';
+import { SessionGuard } from './session.guard';
 
 @Controller('/admin')
 export class AdminController {
@@ -44,9 +55,11 @@ export class AdminController {
   }
 
   @Put('/updateadmin/')
+  @UseGuards(SessionGuard)
   @UsePipes(new ValidationPipe())
-  updateAdmin(@Body('name') name: string, @Body('id') id: number): any {
-    return this.adminService.updateUser(name, id);
+  updateAdmin(@Session() session,@Body('name') name: string): any {
+    console.log(session.email);
+    return this.adminService.updateUser(name, session.email);
   }
 
   @Put('/updateadmin/:id')
@@ -79,6 +92,64 @@ export class AdminController {
     getAdminByManagerID(@Param('id', ParseIntPipe) id: number): any {
       return this.managerService.getAdminByManagerID(id);
     }
+   
+@Post('/signup')
+@UseInterceptors(FileInterceptor('myfile',
+{storage:diskStorage({
+  destination: './uploads',
+  filename: function (req, file, cb) {
+    cb(null,Date.now()+file.originalname)
+  }
+})
+
+}))
+signup(@Body() mydto:AdminForm,@UploadedFile(  new ParseFilePipe({
+  validators: [
+    new MaxFileSizeValidator({ maxSize: 16000 }),
+    new FileTypeValidator({ fileType: 'png|jpg|jpeg|' }),
+  ],
+}),) file: Express.Multer.File){
+
+mydto.filename = file.filename;  
+
+return this.adminService.signup(mydto);
+console.log(file)
+}
+@Get('/signin')
+signin(@Session() session, @Body() mydto:AdminForm)
+{
+if(this.adminService.signin(mydto))
+{
+  session.email = mydto.email;
+
+  console.log(session.email);
+  return {message:"success"};
+
+}
+else
+{
+  return {message:"invalid credentials"};
+}
+ 
+}
+@Get('/signout')
+signout(@Session() session)
+{
+  if(session.destroy())
+  {
+    return {message:"you are logged out"};
+  }
+  else
+  {
+    throw new UnauthorizedException("invalid actions");
+  }
+}
+@Post('/sendemail')
+sendEmail(@Body() mydata){
+return this.adminService.sendEmail(mydata);
+}
+
+
 
 
 

@@ -18,7 +18,7 @@ insertManager(mydto:ManagerForm):any {
     
    return this.managerRepo.save(mydto);
       }
-getAdminByManagerID(id):any {
+      getAdminByManagerID(id):any {
         return this.managerRepo.find({ 
                 where: {id:id},
             relations: {
@@ -26,6 +26,5 @@ getAdminByManagerID(id):any {
             },
          });
     }
-
 
 }

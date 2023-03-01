@@ -4,14 +4,16 @@ import { Repository } from 'typeorm';
 import { AdminEntity } from "./adminentity.entity";
 import { AdminForm } from "./adminform.dto";
 import { AdminFormUpdate } from "./adminformupdate.dto";
-
-
+import * as bcrypt from 'bcrypt';
+import { MailerService } from "@nestjs-modules/mailer/dist";
 @Injectable()
 export class AdminService {
     constructor(
         @InjectRepository(AdminEntity)
         private adminRepo: Repository<AdminEntity>,
-      ) {}
+        private mailerService: MailerService
+      
+        ) {}
 
 getIndex():any { 
     return this.adminRepo.find();
@@ -34,9 +36,9 @@ insertUser(mydto:AdminForm):any {
    return this.adminRepo.save(adminaccount);
       }
 
-updateUser(name,id):any {
-    console.log(name+id);
-    return this.adminRepo.update(id,{name:name});
+updateUser(name,email):any {
+   
+    return this.adminRepo.update({email:email},{name:name});
     }
 updateUserbyid(mydto:AdminFormUpdate,id):any {
     return this.adminRepo.update(id,mydto);
@@ -54,6 +56,35 @@ updateUserbyid(mydto:AdminFormUpdate,id):any {
             },
          });
     }
+    
+async signup(mydto) {
+const salt = await bcrypt.genSalt();
+const hassedpassed = await bcrypt.hash(mydto.password, salt);
+mydto.password= hassedpassed;
+return this.adminRepo.save(mydto);
+}
+
+async signin(mydto){
+    console.log(mydto.password);
+const mydata= await this.adminRepo.findOneBy({email: mydto.email});
+const isMatch= await bcrypt.compare(mydto.password, mydata.password);
+if(isMatch) {
+return 1;
+}
+else {
+    return 0;
+}
+
+}
+
+async sendEmail(mydata){
+ return   await this.mailerService.sendMail({
+        to: mydata.email,
+        subject: mydata.subject,
+        text: mydata.text, 
+      });
+
+}
 
 
 }

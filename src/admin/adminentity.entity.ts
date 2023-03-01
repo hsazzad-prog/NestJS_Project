@@ -17,6 +17,9 @@ export class AdminEntity{
 
   @Column()
   address: string;
+
+  @Column()
+  filename: string;
   
   @OneToMany(() => ManagerEntity, (manager) => manager.admin)
   managers: ManagerEntity[]

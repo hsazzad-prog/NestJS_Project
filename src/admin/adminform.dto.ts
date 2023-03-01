@@ -14,7 +14,7 @@ export class AdminForm {
 
  
     address: string;
-
+filename:string;
 
 
 }
