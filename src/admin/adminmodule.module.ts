@@ -16,8 +16,8 @@ imports: [
                    ignoreTLS: true,
                    secure: true,
                    auth: {
-                       user: 'sazzad.utm@gmail.com',
-                       pass: 'xbtrfehoqsckankx'
+                       user: 'your email address',
+                       pass: 'your app password'
                    },
                   }
       }),
