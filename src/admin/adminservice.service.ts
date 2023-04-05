@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AdminEntity } from "./adminentity.entity";
@@ -19,8 +19,17 @@ getIndex():any {
     return this.adminRepo.find();
 
 }
-getUserByID(id):any {
-    return this.adminRepo.findOneBy({ id });
+async getUserByID(id) {
+    const data=await this.adminRepo.findOneBy({ id });
+    console.log(data);
+    if(data!==null) {
+        return data;
+    }
+   else 
+   {
+    throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+   }
+
 }
 
 getUserByIDName(qry):any {

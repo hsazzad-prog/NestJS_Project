@@ -22,7 +22,9 @@ imports: [
                   }
       }),
       
-    TypeOrmModule.forFeature([AdminEntity, ManagerEntity])],
+    TypeOrmModule.forFeature([AdminEntity, ManagerEntity]),
+
+],
 controllers: [AdminController],
 providers: [AdminService,ManagerService],
 

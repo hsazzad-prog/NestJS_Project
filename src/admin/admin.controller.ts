@@ -16,7 +16,10 @@ import {
   UsePipes,
   ValidationPipe,
   Session,
-  UseGuards
+  UseGuards,
+  Res,
+  Header,
+  HttpCode
 } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -40,6 +43,7 @@ export class AdminController {
   }
   
   @Get('/findadmin/:id')
+ 
   getAdminByID(@Param('id', ParseIntPipe) id: number): any {
     return this.adminService.getUserByID(id);
   }
@@ -87,6 +91,11 @@ export class AdminController {
     getManagerByAdminID(@Param('id', ParseIntPipe) id: number): any {
       return this.adminService.getManagersByAdminID(id);
     }
+    @Get('/getimage/:name')
+    getImages(@Param('name') name, @Res() res) {
+      res.sendFile(name,{ root: './uploads' })
+    }
+  
 
     @Get('/findadminbymanager/:id')
     getAdminByManagerID(@Param('id', ParseIntPipe) id: number): any {
