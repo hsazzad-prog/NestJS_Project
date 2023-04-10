@@ -36,14 +36,14 @@ getUserByIDName(qry):any {
     return this.adminRepo.findOneBy({ id:qry.id,name:qry.name });
 }
 
-insertUser(mydto:AdminForm):any {
-    const adminaccount = new AdminEntity()
-    adminaccount.name = mydto.name;
-    adminaccount.email = mydto.email;
-    adminaccount.password = mydto.password;
-    adminaccount.address = mydto.address;
-   return this.adminRepo.save(adminaccount);
-      }
+
+
+    async insertUser(mydto) {
+     const salt = await bcrypt.genSalt();
+     const hassedpassed = await bcrypt.hash(mydto.password, salt);
+     mydto.password= hassedpassed;
+      return this.adminRepo.save(mydto);
+     }
 
 updateUser(name,email):any {
    

@@ -52,10 +52,27 @@ export class AdminController {
   getAdminByIDName(@Query() qry: any): any {
     return this.adminService.getUserByIDName(qry);
   }
+
+
   @Post('/insertadmin')
-@UsePipes(new ValidationPipe())
-  insertAdmin(@Body() mydto: AdminForm): any {
-    return this.adminService.insertUser(mydto);
+  @UseInterceptors(FileInterceptor('myfile',
+  {storage:diskStorage({
+    destination: './uploads',
+    filename: function (req, file, cb) {
+      cb(null,Date.now()+file.originalname)
+    }
+  })
+  }))
+  insertAdmin(@Body() mydto:AdminForm,@UploadedFile(  new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator({ maxSize: 160000 }),
+      new FileTypeValidator({ fileType: 'png|jpg|jpeg|' }),
+    ],
+  }),) file: Express.Multer.File){
+  
+  mydto.filename = file.filename;  
+  console.log(mydto)
+  return this.adminService.insertUser(mydto);
   }
 
   @Put('/updateadmin/')
@@ -114,15 +131,15 @@ export class AdminController {
 }))
 signup(@Body() mydto:AdminForm,@UploadedFile(  new ParseFilePipe({
   validators: [
-    new MaxFileSizeValidator({ maxSize: 16000 }),
+    new MaxFileSizeValidator({ maxSize: 160000 }),
     new FileTypeValidator({ fileType: 'png|jpg|jpeg|' }),
   ],
 }),) file: Express.Multer.File){
 
 mydto.filename = file.filename;  
-
+console.log(mydto)
 return this.adminService.signup(mydto);
-console.log(file)
+
 }
 @Get('/signin')
 signin(@Session() session, @Body() mydto:AdminForm)

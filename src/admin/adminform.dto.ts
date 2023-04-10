@@ -12,9 +12,9 @@ export class AdminForm {
     @Length(3,8)
     password: string;
 
- 
     address: string;
-filename:string;
+
+    filename:string;
 
 
 }
