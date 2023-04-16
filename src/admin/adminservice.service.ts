@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AdminEntity } from "./adminentity.entity";
-import { AdminForm } from "./adminform.dto";
 import { AdminFormUpdate } from "./adminformupdate.dto";
 import * as bcrypt from 'bcrypt';
 import { MailerService } from "@nestjs-modules/mailer/dist";
@@ -74,16 +73,20 @@ return this.adminRepo.save(mydto);
 }
 
 async signin(mydto){
-    console.log(mydto.password);
-const mydata= await this.adminRepo.findOneBy({email: mydto.email});
-const isMatch= await bcrypt.compare(mydto.password, mydata.password);
-if(isMatch) {
-return 1;
-}
-else {
-    return 0;
-}
-
+   
+    if (mydto.email != null && mydto.password != null) {
+        const mydata = await this.adminRepo.findOneBy({ email: mydto.email });
+        const isMatch = await bcrypt.compare(mydto.password, mydata.password);
+        if (isMatch) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+   
 }
 
 async sendEmail(mydata){

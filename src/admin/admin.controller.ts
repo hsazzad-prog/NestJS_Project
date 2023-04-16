@@ -141,22 +141,20 @@ console.log(mydto)
 return this.adminService.signup(mydto);
 
 }
-@Get('/signin')
-signin(@Session() session, @Body() mydto:AdminForm)
-{
-if(this.adminService.signin(mydto))
+  @Post('/signin')
+  @UsePipes(new ValidationPipe())
+async signin(@Session() session, @Body() mydto:AdminForm)
+  {
+    const res = await (this.adminService.signin(mydto));
+if(res==true)
 {
   session.email = mydto.email;
-
-  console.log(session.email);
-  return {message:"success"};
-
+  return (session.email);
 }
 else
 {
-  return {message:"invalid credentials"};
+  throw new UnauthorizedException({ message: "invalid credentials" });
 }
- 
 }
 @Get('/signout')
 signout(@Session() session)
