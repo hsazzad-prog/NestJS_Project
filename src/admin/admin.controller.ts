@@ -31,11 +31,15 @@ import { AdminFormUpdate } from './adminformupdate.dto';
 import { AdminService } from './adminservice.service';
 import { SessionGuard } from './session.guard';
 
-@Controller('/admin')
+@Controller('/')
 export class AdminController {
   constructor(private adminService: AdminService,
     private managerService: ManagerService
-    ) {}
+  ) { }
+  @Get('/')
+  gethellow(): any {
+    return "hellow";
+  }
 
   @Get('/index')
   getAdmin(): any {
