@@ -8,11 +8,11 @@ import { join } from 'path';
 @Module({
   imports: [AdminModule, ManagerModule, TypeOrmModule.forRoot(
    { type: 'postgres',
-    host: 'localhost',
-    port: 5432,
+    host: 'postgresql://postgres:jMj4F2prfxt39RL2I3MY@containers-us-west-144.railway.app:7368/railway',
+    port: 7368,
     username: 'postgres',
-    password: 'root',
-    database: 'abc_ecommerce',
+    password: 'jMj4F2prfxt39RL2I3MY',
+    database: 'railway',
     autoLoadEntities: true,
     synchronize: true,
   }
