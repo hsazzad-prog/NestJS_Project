@@ -31,7 +31,7 @@ import { AdminFormUpdate } from './adminformupdate.dto';
 import { AdminService } from './adminservice.service';
 import { SessionGuard } from './session.guard';
 
-@Controller('/')
+@Controller('/admin')
 export class AdminController {
   constructor(private adminService: AdminService,
     private managerService: ManagerService
