@@ -114,7 +114,7 @@ export class AdminController {
     }
     @Get('/getimage/:name')
     getImages(@Param('name') name, @Res() res) {
-      res.sendFile(name,{ root: './uploads' })
+      res.sendFile(name,{ root: '/uploads' })
     }
   
 
