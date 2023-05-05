@@ -2,8 +2,6 @@ import { IsNotEmpty, IsInt, Length, IsEmail } from "class-validator";
 
 export class AdminForm {   
    
-
-   
     name: string;
    
     @IsEmail() 
